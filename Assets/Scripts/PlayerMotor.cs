@@ -9,7 +9,11 @@ public class PlayerMotor : MonoBehaviour {
 
     Vector3 velocity = Vector3.zero;
     Vector3 rotation = Vector3.zero;
-    Vector3 cameraRotation = Vector3.zero;
+    float cameraRotationX = 0f;
+    Vector3 thrusterForce = Vector3.zero;
+
+    [SerializeField] float cameraRotationLimit = 85f;
+    float currentCameraRotationX = 0f;
 
     Rigidbody rb;
 
@@ -28,9 +32,14 @@ public class PlayerMotor : MonoBehaviour {
         rotation = _rotation;
     }
 
-    public void RotateCamera (Vector3 _cameraRotation)
+    public void ApplyThruster(Vector3 _thrusterForce)
     {
-        cameraRotation = _cameraRotation;
+        thrusterForce = _thrusterForce;
+    }
+
+    public void RotateCamera (float _cameraRotationX)
+    {
+        cameraRotationX = _cameraRotationX;
     }
 
     void FixedUpdate()
@@ -46,6 +55,11 @@ public class PlayerMotor : MonoBehaviour {
         {
             rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
         }
+
+        if (thrusterForce != Vector3.zero)
+        {
+            rb.AddForce(thrusterForce * Time.fixedDeltaTime, ForceMode.Acceleration);
+        }
     }
 
     void PerformRotation()
@@ -57,7 +71,10 @@ public class PlayerMotor : MonoBehaviour {
     {
         if (cam != null)
         {
-            cam.transform.Rotate(-cameraRotation);
+            currentCameraRotationX -= cameraRotationX;
+            currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
+
+            cam.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0, 0);
         }
     }
 }
