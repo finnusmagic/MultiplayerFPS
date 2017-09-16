@@ -67,7 +67,7 @@ GameObject:
   - component: {fileID: 4059700803528768}
   - component: {fileID: 33923596013111770}
   - component: {fileID: 23844814296014944}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Thruster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,7 +82,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4532166861386136}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,8 +129,8 @@ GameObject:
   - component: {fileID: 4023367677664040}
   - component: {fileID: 199307017840222026}
   - component: {fileID: 198861430463776270}
-  m_Layer: 0
-  m_Name: Afterburner
+  m_Layer: 8
+  m_Name: Afterburner Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -164,8 +164,8 @@ GameObject:
   - component: {fileID: 4917307442741900}
   - component: {fileID: 199217855707530956}
   - component: {fileID: 198756778892184636}
-  m_Layer: 0
-  m_Name: Afterburner (1)
+  m_Layer: 8
+  m_Name: Afterburner Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 4513302105819020}
   - component: {fileID: 33309504392515776}
   - component: {fileID: 23714748457305858}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Armor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,7 +235,7 @@ GameObject:
   - component: {fileID: 4228975681936264}
   - component: {fileID: 33646117307239464}
   - component: {fileID: 23343057622996668}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Eyelight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 4402428490580374}
   - component: {fileID: 33834391960787114}
   - component: {fileID: 23251929801555666}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -510,7 +510,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294966271
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -947,6 +947,10 @@ MonoBehaviour:
   - {fileID: 114593457750484600}
   - {fileID: 95602833417945484}
   remoteLayerName: RemotePlayer
+  dontDrawLayerName: DontDraw
+  playerGraphics: {fileID: 1255277145671522}
+  playerUIPrefab: {fileID: 1843390675544330, guid: 2adf88b0e1aa650409fe6221db5b05c1,
+    type: 2}
 --- !u!114 &114242259538362324
 MonoBehaviour:
   m_ObjectHideFlags: 1
