@@ -31,27 +31,52 @@ public class Player : NetworkBehaviour {
     [SerializeField] GameObject deathEffect;
     [SerializeField] GameObject spawnEffect;
 
-    public void Setup()
-    {
-        wasEnabled = new bool[disableOnDeath.Length];
+    bool firstSetup = true;
 
-        for (int i = 0; i < wasEnabled.Length; i++)
+    public void SetupPlayer()
+    {
+        if(isLocalPlayer)
         {
-            wasEnabled[i] = disableOnDeath[i].enabled;
+            GetComponent<PlayerSetup>().playerUIInstance.SetActive(true);
+            GameManager.instance.SetSceneCameraActive(false);
+        }
+
+        CmdBroadCastNewPlayerSetup();
+    }
+
+    [Command]
+    void CmdBroadCastNewPlayerSetup()
+    {
+        RpcSetupPlayerOnAllClients();
+    }
+
+    [ClientRpc]
+    void RpcSetupPlayerOnAllClients()
+    {
+        if(firstSetup)
+        {
+            wasEnabled = new bool[disableOnDeath.Length];
+
+            for (int i = 0; i < wasEnabled.Length; i++)
+            {
+                wasEnabled[i] = disableOnDeath[i].enabled;
+            }
+
+            firstSetup = false;
         }
 
         SetDefaults();
     }
 
-    void Update()
-    {
-        if (!isLocalPlayer)
-            return;
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            RpcTakeDamage(9999);
-        }
-    }
+    //void Update()
+    //{
+    //    if (!isLocalPlayer)
+    //        return;
+    //    if (Input.GetKeyDown(KeyCode.K))
+    //    {
+    //        RpcTakeDamage(9999);
+    //    }
+    //}
 
     [ClientRpc]
     public void RpcTakeDamage(int _amount)
@@ -110,7 +135,9 @@ public class Player : NetworkBehaviour {
         transform.position = _spawnPoint.position;
         transform.rotation = _spawnPoint.rotation;
 
-        SetDefaults();
+        yield return new WaitForSeconds(0.1f);
+
+        SetupPlayer();
 
         Debug.Log(transform.name + " respawned.");
     }
@@ -134,12 +161,6 @@ public class Player : NetworkBehaviour {
         if (_col != null)
         {
             _col.enabled = true;
-        }
-
-        if (isLocalPlayer)
-        {
-            GetComponent<PlayerSetup>().playerUIInstance.SetActive(true);
-            GameManager.instance.SetSceneCameraActive(false);
         }
 
         GameObject _gfxIns = (GameObject)Instantiate(spawnEffect, transform.position, Quaternion.identity);
