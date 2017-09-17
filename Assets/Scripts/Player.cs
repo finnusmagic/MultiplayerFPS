@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[RequireComponent(typeof(PlayerSetup))]
 public class Player : NetworkBehaviour {
 
     [SyncVar]
@@ -25,6 +26,11 @@ public class Player : NetworkBehaviour {
     [SerializeField] Behaviour[] disableOnDeath;
     bool[] wasEnabled;
 
+    [SerializeField] GameObject[] disableGameObjectsOnDeath;
+
+    [SerializeField] GameObject deathEffect;
+    [SerializeField] GameObject spawnEffect;
+
     public void Setup()
     {
         wasEnabled = new bool[disableOnDeath.Length];
@@ -35,6 +41,16 @@ public class Player : NetworkBehaviour {
         }
 
         SetDefaults();
+    }
+
+    void Update()
+    {
+        if (!isLocalPlayer)
+            return;
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            RpcTakeDamage(9999);
+        }
     }
 
     [ClientRpc]
@@ -61,10 +77,24 @@ public class Player : NetworkBehaviour {
             disableOnDeath[i].enabled = false;
         }
 
+        for (int i = 0; i < disableGameObjectsOnDeath.Length; i++)
+        {
+            disableGameObjectsOnDeath[i].SetActive(false);
+        }
+
         Collider _col = GetComponent<Collider>();
         if (_col != null)
         {
             _col.enabled = false;
+        }
+
+        GameObject _gfxIns = (GameObject) Instantiate(deathEffect, transform.position, Quaternion.identity);
+        Destroy(_gfxIns, 3f);
+
+        if(isLocalPlayer)
+        {
+            GameManager.instance.SetSceneCameraActive(true);
+            GetComponent<PlayerSetup>().playerUIInstance.SetActive(false);
         }
 
         Debug.Log(transform.name + " is Dead.");
@@ -76,10 +106,11 @@ public class Player : NetworkBehaviour {
     {
         yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
 
-        SetDefaults();
         Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
         transform.position = _spawnPoint.position;
         transform.rotation = _spawnPoint.rotation;
+
+        SetDefaults();
 
         Debug.Log(transform.name + " respawned.");
     }
@@ -94,10 +125,24 @@ public class Player : NetworkBehaviour {
             disableOnDeath[i].enabled = wasEnabled[i];
         }
 
+        for (int i = 0; i < disableGameObjectsOnDeath.Length; i++)
+        {
+            disableGameObjectsOnDeath[i].SetActive(true);
+        }
+
         Collider _col = GetComponent<Collider>();
         if (_col != null)
         {
             _col.enabled = true;
         }
+
+        if (isLocalPlayer)
+        {
+            GetComponent<PlayerSetup>().playerUIInstance.SetActive(true);
+            GameManager.instance.SetSceneCameraActive(false);
+        }
+
+        GameObject _gfxIns = (GameObject)Instantiate(spawnEffect, transform.position, Quaternion.identity);
+        Destroy(_gfxIns, 3f);
     }
 }
