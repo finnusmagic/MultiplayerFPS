@@ -24,16 +24,19 @@ public class UserAccountManager : MonoBehaviour
     public static string playerUsername { get; protected set; }
     public static string playerPassword { get; protected set; }
 
-    public static string LoggedIn_data { get; protected set; }
-
     public static bool isLoggedIn { get; protected set; }
+
+    public string loggedInSceneName = "Lobby";
+    public string loggedOutSceneName = "LoginMenu";
+
+    public delegate void OnDataReceivedCallBack(string data);
 
     public void LogOut()
     {
         playerUsername = "";
         playerPassword = "";
         isLoggedIn = false;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(loggedOutSceneName);
     }
 
     public void LogIn(string _Username, string _Password)
@@ -41,7 +44,7 @@ public class UserAccountManager : MonoBehaviour
         playerUsername = _Username;
         playerPassword = _Password;
         isLoggedIn = true;
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(loggedInSceneName);
     }
 
     public void SendData(string data)
@@ -71,14 +74,14 @@ public class UserAccountManager : MonoBehaviour
         }
     }
 
-    public void GetData()
+    public void GetData(OnDataReceivedCallBack onDataReceived)
     {
         //Called when the player hits 'Get Data' to retrieve the data string on their account. Switches UI to 'Loading...' and starts coroutine to get the players data string from the server
         if (isLoggedIn)
-            StartCoroutine(GetData_numerator());
+            StartCoroutine(GetData_numerator(onDataReceived));
     }
 
-    IEnumerator GetData_numerator()
+    IEnumerator GetData_numerator(OnDataReceivedCallBack onDataReceived)
     {
         string data = "ERROR";
         IEnumerator e = DCF.GetUserData(playerUsername, playerPassword); // << Send request to get the player's data string. Provides the username and password
@@ -98,6 +101,7 @@ public class UserAccountManager : MonoBehaviour
             data = response;
         }
 
-        LoggedIn_data = data;
+        if (onDataReceived != null)
+            onDataReceived.Invoke(data);
     }
 }
