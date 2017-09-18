@@ -71,7 +71,7 @@ public class DCF_DemoScene_ManagerScript_CSharp : MonoBehaviour {
             ResetAllUIElements();
             loadingParent.gameObject.SetActive(false);
             loggedInParent.gameObject.SetActive(true);
-            LoggedIn_DisplayUsernameText.text = "Logged In As: " + playerUsername;
+            LoggedIn_DisplayUsernameText.text = playerUsername;
         } else
         {
             //Something went wrong logging in. Stop showing 'Loading...' and go back to LoginUI
