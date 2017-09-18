@@ -30,6 +30,9 @@ public class PlayerShoot : NetworkBehaviour {
     {
         currentWeapon = weaponManager.GetCurrentWeapon();
 
+        if (PauseMenu.isOn)
+            return;
+
         if(currentWeapon.fireRate <= 0f)
         {
             if (Input.GetButtonDown("Fire1"))
